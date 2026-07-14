@@ -120,36 +120,49 @@
   }
   .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan);}
 
-  /* timeline scrubber — signature element */
-  .scrubber{
-    margin-top:70px; position:relative;
-    height:64px; border-radius:12px;
-    background:var(--panel); border:1px solid var(--line);
-    display:flex; align-items:center; padding:0 18px; gap:14px;
-    overflow:hidden;
+  /* hero reel — clickable photo strip */
+  .hero-reel{
+    margin-top:70px; display:grid;
+    grid-template-columns:repeat(3,1fr); gap:16px;
   }
-  .scrubber .track{
-    flex:1; height:26px; border-radius:6px; position:relative;
-    background:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 24px);
+  .reel-item{
+    position:relative; height:150px; border-radius:14px;
+    overflow:hidden; cursor:pointer; border:1px solid var(--line);
+    background:var(--panel);
   }
-  .scrubber .clip{
-    position:absolute; top:2px; bottom:2px; border-radius:5px;
-    background:linear-gradient(90deg, var(--cyan), var(--magenta));
-    opacity:0.85;
+  .reel-item img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform .45s ease;
   }
-  .clip1{left:2%; width:18%;}
-  .clip2{left:24%; width:30%; background:linear-gradient(90deg,var(--magenta),var(--amber));}
-  .clip3{left:58%; width:24%; background:linear-gradient(90deg,var(--amber),var(--cyan));}
-  .playhead{
-    position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff;
-    box-shadow:0 0 12px #fff; left:8%;
-    animation:scrub 5s ease-in-out infinite;
+  .reel-item:nth-child(1) img{object-position:left center;}
+  .reel-item:nth-child(2) img{object-position:center center;}
+  .reel-item::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(7,7,13,0.10) 0%, rgba(7,7,13,0.85) 100%);
+    transition:background .3s ease;
   }
-  @keyframes scrub{
-    0%,100%{left:6%;} 50%{left:88%;}
+  .reel-item:hover img{transform:scale(1.07);}
+  .reel-item:hover::after{background:linear-gradient(180deg, rgba(7,7,13,0.05) 0%, rgba(7,7,13,0.65) 100%);}
+  .reel-tag{
+    position:absolute; top:12px; left:14px; z-index:1;
+    font-size:10px; color:var(--cyan); letter-spacing:0.06em;
   }
-  .tc{font-size:12px;color:var(--muted); min-width:78px;}
+  .reel-label{
+    position:absolute; left:14px; bottom:12px; right:48px; z-index:1;
+    font-size:14px; font-weight:600; line-height:1.25;
+  }
+  .reel-play{
+    position:absolute; right:12px; bottom:12px; z-index:1;
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,0.14); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .25s ease;
+  }
+  .reel-item:hover .reel-play{background:linear-gradient(100deg,var(--cyan),var(--magenta));}
+  .reel-item:hover .reel-play svg{color:#07070d;}
+  @media(max-width:760px){
+    .hero-reel{grid-template-columns:1fr;}
+  }
 
   /* ---------- section shell ---------- */
   section{padding:130px 6vw;}
@@ -354,15 +367,25 @@
     <a href="#trabalhos" class="btn btn-primary">Ver trabalhos</a>
   </div>
 
-  <div class="scrubber">
-    <span class="tc mono">00:00:04:12</span>
-    <div class="track">
-      <div class="clip clip1"></div>
-      <div class="clip clip2"></div>
-      <div class="clip clip3"></div>
-      <div class="playhead"></div>
+  <div class="hero-reel">
+    <div class="reel-item" onclick="heroOpen('igreen')">
+      <img src="banner-hero.jpg" alt="iGreen">
+      <span class="reel-tag mono">CANAIS · IGREEN</span>
+      <span class="reel-label">iGreen — edição de conteúdo</span>
+      <div class="reel-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
     </div>
-    <span class="tc mono" style="text-align:right;">00:01:28:07</span>
+    <div class="reel-item" onclick="heroOpen('sombras')">
+      <img src="banner-hero.jpg" alt="Sombrasof_">
+      <span class="reel-tag mono">CRIADORES · SOMBRASOF_</span>
+      <span class="reel-label">Sombrasof_ — cortes ágeis</span>
+      <div class="reel-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+    </div>
+    <div class="reel-item" onclick="heroOpen('frases-marca')">
+      <img src="img/banner-camisas.jpg" alt="Frases">
+      <span class="reel-tag mono">DESIGN · BRANDING</span>
+      <span class="reel-label">Frases — da audiência ao produto</span>
+      <div class="reel-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+    </div>
   </div>
 
   <div class="photo-credit mono">Foto autoral — São Paulo, zona leste</div>
@@ -560,6 +583,12 @@ function toggleVideo(id){
   const isOpen = el.classList.contains('open');
   document.querySelectorAll('.video-wrap').forEach(v => { v.classList.remove('open'); v.querySelector('video').pause(); });
   if(!isOpen){ el.classList.add('open'); }
+}
+
+function heroOpen(id){
+  toggleVideo(id);
+  const el = document.getElementById('video-' + id);
+  if(el){ setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'center'}), 60); }
 }
 
 document.addEventListener('click', function(e){
